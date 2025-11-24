@@ -13,6 +13,7 @@
 \usepackage{array}
 \usepackage{makecell}
 \usepackage{float}
+\usepackage{multicol}
 
 
 
@@ -79,6 +80,7 @@
             \end{figure}
 
             \subsubsection{Code example}
+            \begin{multicols}{2}
             \begin{verbatim}
     import RPi.GPIO as GPIO
     import time
@@ -132,6 +134,7 @@
         pwm.stop()
         GPIO.cleanup()
             \end{verbatim}
+            \end{multicols}
 
             \subsubsection{Remark for connection with RBP}
             \begin{itemize}
@@ -154,6 +157,7 @@
             \end{figure}
 
             \subsubsection{Code example}
+            \begin{multicols}{2}
             \begin{verbatim}
     // Motor control pins
     int IN1 = 7;
@@ -201,11 +205,13 @@
     delay(1000);
     }
             \end{verbatim}
+            \end{multicols}
+
 
             \subsubsection{Remark for conection with Arduino}
             \begin{itemize}
                 \item 1 L298N occupies at least 4 GPIOs on Arduino (for 2 motors).
-                \vspace{-5pt}\item Recommend connection: Motor -> L298N -> Arduino -> RBP
+                \vspace{-5pt}\item Recommend connection: Motor $\rightarrow$ L298N $\rightarrow$ Arduino $\rightarrow$ RBP
 
             \end{itemize}
 
