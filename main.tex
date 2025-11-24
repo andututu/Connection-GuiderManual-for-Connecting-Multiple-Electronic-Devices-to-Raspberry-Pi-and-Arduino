@@ -30,20 +30,22 @@
     \section{Motor}
         % subsection{Product link}
         % DIT CON ME MAY CHUA CO LINK
-        \subsection{Connection with Raspberry Pi}
-            \subsubsection{Material}
-            Motor, Raspberry Pi, motor driver L298N and GPIO cables.
-
+        \subsection{Material}
+            \raggedright
+            Motor: 9V, 24V, speed changing by PWM\\
+            Raspberry Pi: Pi 4 Model B, Pi 5/Arduino Uno Rev 3\\
+            GPIO cables\\
+            Motor driver L298N\\
             L298N Pinout:
 
-            \begin{figure}[H]                                           % 'h' = here
-                \centering                                              % center the image
+            \begin{figure}[H]                                      
+                \centering
                 \includegraphics[width=0.35\textwidth]{image/L298Npinout.jpg}
-                \caption{L298N Pin Layout}                              % caption
+                \caption{L298N Pin Layout}
                 \label{fig: l298npin}
             \end{figure}
-
-            Input1 controls OUT1 and so on.
+            1 L298N can controll maximum 2 independent motors.\\
+            Input1 controls OUT1 and so on.\\
             Control by H-bridge:
             \begin{center}
                 \small
@@ -56,34 +58,156 @@
                 \end{tabular}
             \end{center}
 
+        \subsection{Connection with Raspberry Pi}
+
             \subsubsection{Connection scheme}
             The connection scheme to connect motor to rbp using l298n
-            \begin{figure}[H]                                           % 'h' = here
-                \centering                                              % center the image
+            \begin{figure}[H]
+                \centering
                 \includegraphics[width=0.5\textwidth]{image/motorscheme.jpg}
-                \caption{Connection scheme}                             % caption
+                \caption{Connection scheme}
                 \label{fig: motorrbprscheme}
             \end{figure}
 
-            \subsubsection{Real image}
+            \subsubsection{Real connection image}
             The image of real connection
-            \begin{figure}[H]                                           % 'h' = here
-                \centering                                              % center the image
+            \begin{figure}[H]
+                \centering
                 \includegraphics[width=0.5\textwidth]{image/motorrealimage.jpg}
-                \caption{Real connection image}                         % caption
+                \caption{Real connection image}
                 \label{fig: motorrbpreal}
             \end{figure}
 
-            \subsubsection{Remark}
-            Some remark about the connection:
+            \subsubsection{Code example}
+            \begin{verbatim}
+    import RPi.GPIO as GPIO
+    import time
+
+    # Pin setup
+    IN1 = 17
+    IN2 = 27
+    ENA = 22  # PWM pin
+
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(IN1, GPIO.OUT)
+    GPIO.setup(IN2, GPIO.OUT)
+    GPIO.setup(ENA, GPIO.OUT)
+
+    # Setup PWM at 1000 Hz
+    pwm = GPIO.PWM(ENA, 1000)
+    pwm.start(0)  # start with speed 0
+
+    def motor_forward(speed):
+        GPIO.output(IN1, GPIO.HIGH)
+        GPIO.output(IN2, GPIO.LOW)
+        pwm.ChangeDutyCycle(speed)
+
+    def motor_backward(speed):
+        GPIO.output(IN1, GPIO.LOW)
+        GPIO.output(IN2, GPIO.HIGH)
+        pwm.ChangeDutyCycle(speed)
+
+    def motor_stop():
+        GPIO.output(IN1, GPIO.LOW)
+        GPIO.output(IN2, GPIO.LOW)
+        pwm.ChangeDutyCycle(0)
+
+    try:
+        print("Motor forward")
+        motor_forward(60)   # 60% speed
+        time.sleep(2)
+
+        print("Motor backward")
+        motor_backward(60)  # 60% speed
+        time.sleep(2)
+
+        print("Stop")
+        motor_stop()
+        time.sleep(1)
+
+    except KeyboardInterrupt:
+        pass
+
+    finally:
+        pwm.stop()
+        GPIO.cleanup()
+            \end{verbatim}
+
+            \subsubsection{Remark for connection with RBP}
             \begin{itemize}
-                \item 1 L298N can controll maximum 2 independent motors.
-                \vspace{-5pt}\item 1 L298N occupies at least 4 GPIOs on RBP (for 2 motors).
+                \item 1 L298N occupies at least 4 GPIOs on RBP (for 2 motors).
                 \vspace{-5pt}\item L298N can be powerred by RBP or external power source.
 
             \end{itemize}
+        
         \subsection{Connection with Arduino}
+            \subsubsection{Connection scheme}
+            The connection scheme to connect motors to arduino uno rev 3 using l298n is the same as connection with RBP
 
+            \subsubsection{Real connection image}
+            The image of real connection
+            \begin{figure}[H]
+                \centering
+                %\includegraphics[width=0.5\textwidth]{image/motorrealimage.jpg}
+                \caption{Real connection image}
+                %\label{fig: motorrbpreal}
+            \end{figure}
+
+            \subsubsection{Code example}
+            \begin{verbatim}
+    // Motor control pins
+    int IN1 = 7;
+    int IN2 = 8;
+    int ENA = 9;   // must be a PWM pin (~)
+
+    void setup() {
+    pinMode(IN1, OUTPUT);
+    pinMode(IN2, OUTPUT);
+    pinMode(ENA, OUTPUT);
+
+    // Start with motor stopped
+    analogWrite(ENA, 0);
+    }
+
+    void motorForward(int speed) {
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    analogWrite(ENA, speed);   // 0-255
+    }
+
+    void motorBackward(int speed) {
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    analogWrite(ENA, speed);   // 0-255
+    }
+
+    void motorStop() {
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    analogWrite(ENA, 0);
+    }
+
+    void loop() {
+    // Forward for 2 seconds
+    motorForward(150);    // about 60% speed
+    delay(2000);
+
+    // Backward for 2 seconds
+    motorBackward(150);
+    delay(2000);
+
+    // Stop for 1 second
+    motorStop();
+    delay(1000);
+    }
+            \end{verbatim}
+
+            \subsubsection{Remark for conection with Arduino}
+            \begin{itemize}
+                \item 1 L298N occupies at least 4 GPIOs on Arduino (for 2 motors).
+                \vspace{-5pt}\item Recommend connection: Motor -> L298N -> Arduino -> RBP
+
+            \end{itemize}
 
 
 
