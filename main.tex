@@ -10,13 +10,17 @@
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{float}
+
 
 
 % Document
 \title{Connection guide for Raspberry Pi and Arduino}
 \author{Trieu An Do}
 \begin{document}
-    \maketitle\centering{Note to myself: BETTER FINISH IT BEFORE CHRISTMAS}
+    \maketitle\centering{BETTER FINISH IT BEFORE CHRISTMAS}
 
     \justifying
     \tableofcontents
@@ -24,27 +28,60 @@
     \newpage
     \newgeometry{margin = 2cm}
     \section{Motor}
-        \subsection{Product link}
-        DIT CON ME MAY CHUA CO LINK
+        % subsection{Product link}
+        % DIT CON ME MAY CHUA CO LINK
         \subsection{Connection with Raspberry Pi}
             \subsubsection{Material}
             Motor, Raspberry Pi, motor driver L298N and GPIO cables.
 
-            \subsubsection{Connection scheme}
+            L298N Pinout:
 
+            \begin{figure}[H]                                           % 'h' = here
+                \centering                                              % center the image
+                \includegraphics[width=0.35\textwidth]{image/L298Npinout.jpg}
+                \caption{L298N Pin Layout}                              % caption
+                \label{fig: l298npin}
+            \end{figure}
+
+            Input1 controls OUT1 and so on.
+            Control by H-bridge:
+            \begin{center}
+                \small
+                \begin{tabular}{|p{2cm}|p{2cm}|p{5cm}|}
+                \hline
+                \vspace{-5pt}\makecell{Low} & \vspace{-5pt}\makecell{Low} & \vspace{-5pt}\makecell{Stop}\\[4pt] \hline
+                \vspace{-5pt}\makecell{High} & \vspace{-5pt}\makecell{Low} & \vspace{-5pt}\makecell{Clockwise/Anti-Clockwise}\\[4pt] \hline
+                \vspace{-5pt}\makecell{High} & \vspace{-5pt}\makecell{Low} & \vspace{-5pt}\makecell{Clockwise/Anti-Clockwise}\\[4pt] \hline
+                \vspace{-5pt}\makecell{High} & \vspace{-5pt}\makecell{High} & \vspace{-5pt}\makecell{Brake}\\[4pt] \hline
+                \end{tabular}
+            \end{center}
+
+            \subsubsection{Connection scheme}
+            The connection scheme to connect motor to rbp using l298n
+            \begin{figure}[H]                                           % 'h' = here
+                \centering                                              % center the image
+                \includegraphics[width=0.5\textwidth]{image/motorscheme.jpg}
+                \caption{Connection scheme}                             % caption
+                \label{fig: motorrbprscheme}
+            \end{figure}
 
             \subsubsection{Real image}
-            Here's the image :)))
-            \begin{figure}[h]                                           % 'h' = here
+            The image of real connection
+            \begin{figure}[H]                                           % 'h' = here
                 \centering                                              % center the image
-                \includegraphics[width=0.5\textwidth]{motorrealimage}
+                \includegraphics[width=0.5\textwidth]{image/motorrealimage.jpg}
                 \caption{Real connection image}                         % caption
                 \label{fig: motorrbpreal}
             \end{figure}
 
-
             \subsubsection{Remark}
+            Some remark about the connection:
+            \begin{itemize}
+                \item 1 L298N can controll maximum 2 independent motors.
+                \vspace{-5pt}\item 1 L298N occupies at least 4 GPIOs on RBP (for 2 motors).
+                \vspace{-5pt}\item L298N can be powerred by RBP or external power source.
 
+            \end{itemize}
         \subsection{Connection with Arduino}
 
 
