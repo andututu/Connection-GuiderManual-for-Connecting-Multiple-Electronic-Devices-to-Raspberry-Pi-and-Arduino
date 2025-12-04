@@ -1,2 +1,2 @@
-# ConnectionGuiderRbpAndArduino
-A collection of wiring guides, connection limits, and integration notes for connecting electronic modules to Raspberry Pi and Arduino.
+# Electronics Connection Guide: Raspberry Pi & Arduino
+A comprehensive guide to connecting multiple electronic devices to Raspberry Pi and Arduino, including wiring diagrams, sample code, and practical tips for ensuring stable and efficient connections.
